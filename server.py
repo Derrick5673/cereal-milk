@@ -1,40 +1,39 @@
-import socket
-import sys
-import cv2
-import pickle
+#!/usr/bin/env python
+
+from socket import *
 import numpy as np
-import struct
+import cv2
 
-HOST = ''
-PORT = 9009
+host = "127.0.0.1"
+port = 4096
+buf = 1024
+addr = (host, port)
+fName = 'img.jpg'
+timeOut = 0.05
 
-s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print('Socket created')
+def foo():
+    while True:
+        s = socket(AF_INET, SOCK_DGRAM)
+        s.bind(addr)
 
-s.bind((HOST, PORT))
-print('Socket bind complete')
-s.listen(10)
-print('Socket now listening')
+        data, address = s.recvfrom(buf)
+        f = open(data, 'wb')
 
-conn, addr = s.accept()
+        data, address = s.recvfrom(buf)
 
-data = b''
-payload_size = struct.calcsize("L")
+        try:
+            while(data):
+                f.write(data)
+                s.settimeout(timeOut)
+                data, address = s.recvfrom(buf)
+        except timeout:
+            f.close()
+            s.close()
+        image = cv2.imread(fName)
+        #cv2.imshow('recv', image)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-while True:
-    while len(data) < payload_size:
-        data += conn.recv(4096)
-    packed_msg_size = data[:payload_size]
-
-    data = data[payload_size:]
-    msg_size = struct.unpack("L", packed_msg_size)[0]
-
-    while len(data) < msg_size:
-        data += conn.recv(4096)
-    frame_data = data[:msg_size]
-    data = data[msg_size:]
-
-    frame=pickle.loads(frame_data)
-    print(frame.size)
-    cv2.imshow('frame', frame)
-    cv2.waitKey(10)
+if __name__ == '__main__':
+    foo()
+    cv2.destroyAllWindows()
