@@ -31,6 +31,7 @@ def foo():
             s.close()
         image = cv2.imread(fName)
         #cv2.imshow('recv', image)
+        print("data is sending!!")
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
