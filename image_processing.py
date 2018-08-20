@@ -88,8 +88,7 @@ def find_Stop_Line(original_image, adjusted_image):
             avg_theta = lines_stop[0][0][1]
             # x * sin(avg_theta) + y * cos(avg_theta) = avg_rho
             if ((math.fabs(avg_theta * (180.0 / math.pi))) > 82 and math.fabs(avg_theta * (180.0 / math.pi)) < 98):
-                cv2.line(original_image, (int((avg_rho-SCREEN_HEIGHT/2*(math.sin(avg_theta)+eps)/(math.cos(avg_theta)+eps))),SCREEN_HEIGHT),
-                 (int(avg_rho/(math.cos(avg_theta)+eps)),SCREEN_HEIGHT/2),(0,0,255),10)
+                cv2.line(original_image, (int((avg_rho-SCREEN_HEIGHT/2*(math.sin(avg_theta)+eps)/(math.cos(avg_theta)+eps))),SCREEN_HEIGHT), (int(avg_rho/(math.cos(avg_theta)+eps)),SCREEN_HEIGHT/2),(0,0,255),10)
                 return True, original_image
             else:
                 return False, original_image
